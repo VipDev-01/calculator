@@ -1,20 +1,29 @@
 const buttons = document.querySelectorAll('button');
 buttons.forEach(button=> button.addEventListener('click', handler));
 
-const display = document.querySelector('.display');
+const display = document.querySelector('.bottom');
+const topDisplay = document.querySelector('.top');
 display.innerText = '';
+display.topDisplay = '';
 
 let firstNumber;
 let secondNumber;
 let lastResult;
 let operator;
 
-const add = (a,b) => a + b;
-const substract = (a,b) => a - b;
-const multiply = (a,b) => a * b;
-const divide = (a,b) => a / b;
+const add = (a,b) => Math.round((a + b) * 100) / 100;
+const substract = (a,b) => Math.round((a - b) * 100) / 100;
+const multiply = (a,b) => Math.round((a * b) * 100) / 100;
+const divide = (a,b) => Math.round((a / b) * 100) / 100;
 
 function handler() {
+
+    if (this.dataset.type == 'period') {
+        if (firstNumber == undefined) return;
+        if (operator == undefined) {
+            firstNumber.toString().includes('.') ? '' : firstN(this.innerText);
+        } else secondNumber.toString().includes('.') ? '' : secondN(this.innerText);
+    }
 
     if (this.dataset.type == 'number' && lastResult != undefined) {
         firstNumber = lastResult;
@@ -35,25 +44,26 @@ function handler() {
 
 function firstN(value) {
     firstNumber == undefined ? firstNumber = value : firstNumber += value;
-    firstNumber = parseInt(firstNumber);
-    console.log(firstNumber);
     display.innerText = firstNumber;
 }
 
 function secondN(value) {
+    if (!operator) return;
     secondNumber == undefined ? secondNumber = value : secondNumber += value;
-    secondNumber = parseInt(secondNumber);
-    console.log(secondNumber);
     display.innerText = secondNumber;
 }
 
 function operatorN(value) {
+    if (!lastResult && !firstNumber) return;
     if (firstNumber != undefined && secondNumber != undefined) operate();
     operator = value;
     display.innerText += operator;
 }
 
 function operate() {
+    if(!firstNumber || !secondNumber) return;
+    firstNumber = Number(firstNumber);
+    secondNumber = Number(secondNumber);
     switch (operator) {
         case '+':
             lastResult = add(firstNumber,secondNumber)
@@ -68,6 +78,7 @@ function operate() {
             lastResult = divide(firstNumber,secondNumber)
             break;
     }
+    topDisplay.innerText = `${firstNumber} ${operator} ${secondNumber}`
     display.innerText = lastResult;
     reset();
     console.log('result: ' + lastResult)
@@ -84,4 +95,5 @@ function clear() {
     reset()
     lastResult = undefined;
     display.innerText = '';
+    topDisplay.innerText = '';
 }
